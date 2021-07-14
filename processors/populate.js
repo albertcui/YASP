@@ -15,6 +15,9 @@ function populate(e, container, meta) {
     case 'cosmetics':
       container.cosmetics = JSON.parse(e.key);
       break;
+    case 'dotaplus':
+      container.dotaplus = JSON.parse(e.key);
+      break;
     case 'CHAT_MESSAGE_FIRSTBLOOD':
     case 'CHAT_MESSAGE_COURIER_LOST':
     case 'CHAT_MESSAGE_AEGIS':

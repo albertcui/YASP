@@ -473,6 +473,10 @@ You can find data that can be used to convert hero and ability IDs and other inf
                         description: 'The ID value of the hero played',
                         type: 'integer',
                       },
+                      hero_dotaplus_xp: {
+                        description: 'Dota Plus hero xp',
+                        type: 'integer',
+                      },
                       item_0: {
                         description: 'Item in the player\'s first slot',
                         type: 'integer',
@@ -1447,7 +1451,13 @@ You can find data that can be used to convert hero and ability IDs and other inf
         summary: 'GET /players/{account_id}/heroes',
         description: 'Heroes played',
         tags: ['players'],
-        parameters: playerParams,
+        parameters: [...playerParams, {
+          name: 'hero_dotaplus_xp',
+          in: 'query',
+          description: 'Hero dotaplus level progress',
+          required: false,
+          type: 'boolean',
+        }],
         responses: {
           200: {
             description: 'Success',
@@ -1489,6 +1499,10 @@ You can find data that can be used to convert hero and ability IDs and other inf
                     description: 'against_win',
                     type: 'integer',
                   },
+                  hero_dotaplus_xp: {
+                    description: 'Appears if the parameter is set',
+                    type: 'integer',
+                  },
                 },
               },
             },
@@ -1511,7 +1525,7 @@ You can find data that can be used to convert hero and ability IDs and other inf
             };
             heroes[heroId] = hero;
           });
-          req.queryObj.project = req.queryObj.project.concat('heroes', 'account_id', 'start_time', 'player_slot', 'radiant_win');
+          req.queryObj.project = req.queryObj.project.concat('heroes', 'account_id', 'start_time', 'player_slot', 'radiant_win', 'hero_dotaplus_xp');
           queries.getPlayerMatches(req.params.account_id, req.queryObj, (err, cache) => {
             if (err) {
               return cb(err);
@@ -1539,6 +1553,10 @@ You can find data that can be used to convert hero and ability IDs and other inf
                   } else {
                     heroes[tmHero].against_games += 1;
                     heroes[tmHero].against_win += playerWin ? 1 : 0;
+                  }
+                  if (req.query.hero_dotaplus_xp) {
+                    // Use the highest xp value
+                    heroes[tmHero].hero_dotaplus_xp = Math.max(m.hero_dotaplus_xp, heroes[tmHero].hero_dotaplus_xp || 0);
                   }
                 }
               });

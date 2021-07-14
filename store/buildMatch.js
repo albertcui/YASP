@@ -12,7 +12,9 @@ const redis = require('../store/redis');
 const db = require('../store/db');
 
 const { computeMatchData } = compute;
-const { deserialize, buildReplayUrl, isContributor } = utility;
+const {
+  deserialize, buildReplayUrl, isContributor,
+} = utility;
 const getRedisAsync = promisify(redis.get).bind(redis);
 
 async function getMatchData(matchId) {
@@ -51,6 +53,7 @@ async function extendPlayerData(player, match) {
     cluster: match.cluster,
     lobby_type: match.lobby_type,
     game_mode: match.game_mode,
+    hero_dotaplus_xp: (match.dotaplus || {})[player.player_slot] || 0,
     is_contributor: isContributor(player.account_id),
   };
   computeMatchData(p);
